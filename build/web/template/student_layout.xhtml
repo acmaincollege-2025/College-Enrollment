@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{loginBean.checkSession}" />
+    </f:metadata>
+    <h:head>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <h:outputStylesheet library="primeicons" name="primeicons.css" />
+        <title>Student Portal</title>
+        <h:outputStylesheet>
+            .page-card { margin:1.5rem; }
+            .page-title { font-size:1.4rem; font-weight:bold; }
+            .action-bar { margin-top:1rem; text-align:right; }
+        </h:outputStylesheet>
+    </h:head>
+
+    <h:body>
+        <h:form>
+            <p:idleMonitor timeout="900000"> <!-- 15 minutes -->
+                <p:ajax event="idle" listener="#{loginBean.log_out}" />
+            </p:idleMonitor>
+        </h:form>
+        <!-- TOP NAV -->
+        <p:menubar>
+            <p:menuitem value="Dashboard" outcome="/Student/enrollment-student.xhtml" icon="pi pi-home"/>
+            <p:menuitem value="Enroll" outcome="/Student/student-enrollment.xhtml" icon="pi pi-book"/>
+            <p:menuitem value="Assessment" outcome="/Student/assessment.xhtml" icon="pi pi-calculator"/>
+            <p:menuitem value="Payment" outcome="/Student/payment.xhtml" icon="pi pi-wallet"/>
+            <p:menuitem value="Grades" outcome="/Student/student_grades.xhtml" icon="pi pi-chart-line"/>
+            <p:menuitem value="Profile" outcome="/Student/student-edit.xhtml" icon="pi pi-user"/>
+            <p:menuitem value="Logout" action="#{loginBean.logout}" icon="pi pi-sign-out"/>
+        </p:menubar>
+
+        <!-- CONTENT -->
+        <ui:insert name="content"/>
+
+    </h:body>
+</html>

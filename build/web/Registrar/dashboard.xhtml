@@ -1,0 +1,149 @@
+<ui:composition template="/template/registrar-layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+        <h2>📊 Enrollment Statistics</h2>
+        <p class="text-muted">Filter and analyze enrollment data</p>
+
+        <h:form id="statsForm">
+
+            <p:messages id="msgs" showDetail="true" closable="true" />
+            <!-- SUMMARY STAT BOXES -->
+            <div class="stat-grid">
+
+                <div class="stat-box">
+                    <div class="stat-header">
+                        <span class="stat-icon">👨‍🎓</span>
+                        <span>Total Enrolled</span>
+                    </div>
+                    <div class="stat-value">
+                        #{dashboardBean.totalEnrolled}
+                    </div>
+                    <div class="stat-desc">
+                        Active enrolled students
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-header">
+                        <span class="stat-icon">📚</span>
+                        <span>Programs</span>
+                    </div>
+                    <div class="stat-value">
+                        #{dashboardBean.totalPrograms}
+                    </div>
+                    <div class="stat-desc">
+                        Academic programs offered
+                    </div>
+                </div>
+
+                <div class="stat-box">
+                    <div class="stat-header">
+                        <span class="stat-icon">📖</span>
+                        <span>Courses</span>
+                    </div>
+                    <div class="stat-value">
+                        #{dashboardBean.totalCourses}
+                    </div>
+                    <div class="stat-desc">
+                        Total available courses
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- FILTER PANEL -->
+            <p:panel header="Filters" styleClass="mb-3">
+
+                <p:panelGrid columns="6" layout="grid"
+                             columnClasses="ui-g-12 ui-md-4,
+                             ui-g-12 ui-md-4,
+                             ui-g-12 ui-md-4">
+
+                    <h:panelGroup>
+                        <h:outputLabel value="Year" />
+                        <p:selectOneMenu value="#{dashboardBean.selectedYear}" style="width:100%">
+                            <f:selectItem itemLabel="Select Year" itemValue="" />
+                            <f:selectItems value="#{dashboardBean.years}" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputLabel value="Semester" />
+                        <p:selectOneMenu value="#{dashboardBean.selectedSemester}" style="width:100%">
+                            <f:selectItem itemLabel="Select Semester" itemValue="" />
+                            <f:selectItem itemLabel="1st" itemValue="1st" />
+                            <f:selectItem itemLabel="2nd" itemValue="2nd" />
+                            <f:selectItem itemLabel="Summer" itemValue="Summer" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputLabel value="Program" />
+                        <p:selectOneMenu value="#{dashboardBean.selectedProgramId}" style="width:100%">
+                            <f:selectItem itemLabel="Select Program" itemValue="" />
+                            <f:selectItems value="#{dashboardBean.programList}"
+                                           var="p"
+                                           itemLabel="#{p.program_name}"
+                                           itemValue="#{p.program_id}" />
+                        </p:selectOneMenu>
+                    </h:panelGroup>
+
+                </p:panelGrid>
+
+                <p:commandButton value="Apply Filter"
+                                 icon="pi pi-search"
+                                 action="#{dashboardBean.filterStats}"
+                                 update="chartPanel tablePanel msgs"
+                                 styleClass="ui-button-success mt-2" />
+            </p:panel>
+
+            <!-- CHART -->
+            <p:panel id="chartPanel" header="Enrollment Chart" styleClass="mb-3">
+                <p:barChart model="#{dashboardBean.enrollmentChart}"
+                            rendered="#{not empty dashboardBean.enrollmentStats}"
+                            style="width:100%; height:350px;" />
+
+                <h:outputText value="No data available."
+                              rendered="#{empty dashboardBean.enrollmentStats}"
+                              styleClass="text-muted" />
+            </p:panel>
+
+            <!-- TABLE -->
+            <p:panel id="tablePanel" header="Enrollment Details">
+
+                <p:dataTable value="#{dashboardBean.enrollmentStats}"
+                             var="e"
+                             paginator="true"
+                             rows="10"
+                             rendered="#{not empty dashboardBean.enrollmentStats}"
+                             styleClass="p-datatable-striped p-datatable-gridlines">
+
+                    <p:column headerText="Course Code">
+                        #{e.course.courseCode}
+                    </p:column>
+
+                    <p:column headerText="Course Title">
+                        #{e.courseTitle}
+                    </p:column>
+
+                    <p:column headerText="Enrolled">
+                        #{e.enrolledCount}
+                    </p:column>
+
+                </p:dataTable>
+
+                <h:outputText value="No enrollment records found."
+                              rendered="#{empty dashboardBean.enrollmentStats}"
+                              styleClass="text-muted" />
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

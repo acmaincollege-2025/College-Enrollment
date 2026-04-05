@@ -1,0 +1,238 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/template/layout-cashier.xhtml">
+
+    <ui:define name="content">
+
+        <!-- ================= MAIN FORM ================= -->
+        <h:form id="feeForm">
+
+            <p:growl id="messages" showDetail="true" life="4000"/>
+
+            <!-- ================= PAGE TITLE ================= -->
+            <h2 style="margin-bottom:20px;">Fee Configuration Management</h2>
+
+            <!-- ================= TUITION SECTION ================= -->
+            <p:panel header="Tuition Fee Configuration" style="margin-bottom:20px;">
+
+                <p:panelGrid columns="3" columnClasses="label,value,action"
+                             layout="grid" style="width:100%;">
+
+                    <h:outputLabel value="Amount per Unit:" />
+
+                    <p:inputNumber value="#{feeConfigBean.tuitionFee.amountPerUnit}"
+                                   decimalPlaces="2"
+                                   required="true"
+                                   minValue="0"
+                                   style="width:200px;" />
+
+                    <p:commandButton value="Save"
+                                     icon="pi pi-save"
+                                     actionListener="#{feeConfigBean.updateTuitionFee}"
+                                     update=":feeForm"
+                                     styleClass="ui-button-success"/>
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- ================= SUMMARY SECTION ================= -->
+            <p:panel header="Fee Summary"
+                     style="margin-bottom:20px;background:#f8f9fa;">
+
+                <p:panelGrid columns="2" layout="grid" style="width:100%;">
+
+                    <h:outputText value="Tuition (per unit):" />
+                    <h:outputText value="#{feeConfigBean.tuitionFee.amountPerUnit}">
+                        <f:convertNumber pattern="₱ #,##0.00"/>
+                    </h:outputText>
+
+                    <h:outputText value="Total Basic Fees:" />
+                    <h:outputText value="#{feeConfigBean.totalBasicFees}">
+                        <f:convertNumber pattern="₱ #,##0.00"/>
+                    </h:outputText>
+
+                    <h:outputText value="Total Other Fees:" />
+                    <h:outputText value="#{feeConfigBean.totalOtherFees}">
+                        <f:convertNumber pattern="₱ #,##0.00"/>
+                    </h:outputText>
+
+                    <h:outputText value="Grand Total (excl. units):"
+                                  style="font-weight:bold;" />
+                    <h:outputText value="#{feeConfigBean.grandTotalFees}"
+                                  style="font-weight:bold;color:#2e7d32;">
+                        <f:convertNumber pattern="₱ #,##0.00"/>
+                    </h:outputText>
+
+                </p:panelGrid>
+
+            </p:panel>
+
+            <!-- ================= BASIC FEES ================= -->
+            <p:panel header="Basic Fees" style="margin-bottom:20px;">
+
+                <p:dataTable value="#{feeConfigBean.basicFees}"
+                             var="bf"
+                             editable="true"
+                             style="width:100%;">
+
+                    <p:column headerText="Fee Name">
+                        <h:outputText value="#{bf.id}" />
+                    </p:column>
+
+                    <p:column headerText="Amount">
+                        <p:cellEditor>
+                            <f:facet name="output">
+                                <h:outputText value="#{bf.amount}">
+                                    <f:convertNumber pattern="#,##0.00"/>
+                                </h:outputText>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputNumber value="#{bf.amount}"
+                                               decimalPlaces="2"
+                                               minValue="0"/>
+                            </f:facet>
+                        </p:cellEditor>
+                    </p:column>
+
+                    <p:column headerText="Action" style="width:120px;">
+                        <p:commandButton icon="pi pi-save"
+                                         title="Update"
+                                         actionListener="#{feeConfigBean.updateBasicFee(bf)}"
+                                         update=":feeForm"
+                                         styleClass="ui-button-success ui-button-flat"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+            <!-- ================= OTHER FEES ================= -->
+            <p:panel header="Other Fees">
+
+                <p:commandButton value="Add Other Fee"
+                                 icon="pi pi-plus"
+                                 type="button"
+                                 onclick="PF('addOtherDlg').show()"
+                                 styleClass="ui-button-primary"
+                                 style="margin-bottom:15px;"/>
+
+                <p:dataTable value="#{feeConfigBean.otherFees}"
+                             var="of"
+                             style="width:100%;">
+
+                    <p:column headerText="Fee Name">
+                        <h:outputText value="#{of.descriptions}" />
+                    </p:column>
+
+                    <p:column headerText="Amount">
+                        <h:outputText value="#{of.amount}">
+                            <f:convertNumber pattern="#,##0.00"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Actions" style="width:150px;">
+
+                        <p:commandButton icon="pi pi-pencil"
+                                         title="Edit"
+                                         process="@this"
+                                         update=":editOtherForm:editOtherPanel"
+                                         oncomplete="PF('editOtherDlg').show()"
+                                         styleClass="ui-button-info ui-button-flat">
+                            <f:setPropertyActionListener value="#{of}"
+                                                         target="#{feeConfigBean.selectedOtherFee}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         title="Delete"
+                                         actionListener="#{feeConfigBean.deleteOtherFee(of.feeCode)}"
+                                         update=":feeForm"
+                                         styleClass="ui-button-danger ui-button-flat"
+                                         onclick="return confirm('Delete this fee?')" />
+                    </p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+
+        <!-- ================= ADD DIALOG ================= -->
+        <p:dialog header="Add Other Fee"
+                  widgetVar="addOtherDlg"
+                  modal="true"
+                  width="400"
+                  resizable="false">
+
+            <h:form id="addOtherForm">
+
+                <p:panelGrid columns="2" layout="grid">
+
+                    <h:outputLabel value="Fee Name:" />
+                    <p:inputText value="#{feeConfigBean.newOtherFee.descriptions}"
+                                 required="true"/>
+
+                    <h:outputLabel value="Amount:" />
+                    <p:inputNumber value="#{feeConfigBean.newOtherFee.amount}"
+                                   decimalPlaces="2"
+                                   minValue="0"
+                                   required="true"/>
+
+                </p:panelGrid>
+
+                <br/>
+
+                <p:commandButton value="Save"
+                                 icon="pi pi-check"
+                                 actionListener="#{feeConfigBean.addOtherFee}"
+                                 update=":feeForm"
+                                 oncomplete="if (!args.validationFailed) PF('addOtherDlg').hide();"
+                                 styleClass="ui-button-success"/>
+
+            </h:form>
+
+        </p:dialog>
+
+        <!-- ================= EDIT DIALOG ================= -->
+        <p:dialog header="Edit Other Fee"
+                  widgetVar="editOtherDlg"
+                  modal="true"
+                  width="400"
+                  resizable="false">
+
+            <h:form id="editOtherForm">
+
+                <p:panelGrid id="editOtherPanel" columns="2" layout="grid">
+
+                    <h:outputLabel value="Fee Name:" />
+                    <p:inputText value="#{feeConfigBean.selectedOtherFee.descriptions}"
+                                 required="true"/>
+
+                    <h:outputLabel value="Amount:" />
+                    <p:inputNumber value="#{feeConfigBean.selectedOtherFee.amount}"
+                                   decimalPlaces="2"
+                                   minValue="0"
+                                   required="true"/>
+
+                </p:panelGrid>
+
+                <br/>
+
+                <p:commandButton value="Update"
+                                 icon="pi pi-save"
+                                 actionListener="#{feeConfigBean.updateOtherFee}"
+                                 update=":feeForm"
+                                 oncomplete="if (!args.validationFailed) PF('editOtherDlg').hide();"
+                                 styleClass="ui-button-primary"/>
+
+            </h:form>
+
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

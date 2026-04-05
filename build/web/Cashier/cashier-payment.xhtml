@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="/templates/cashier-template.xhtml">
+
+    <ui:define name="title">
+        Cashier | Payments
+    </ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="paymentForm">
+
+            <!-- ================= SUMMARY ================= -->
+            <p:panel header="Student Payment Summary" style="margin-bottom:15px;">
+
+                <h:panelGrid columns="3" cellpadding="10" style="width:100%; text-align:center;">
+
+                    <h:panelGroup>
+                        <h:outputText value="Total Assessment" styleClass="ui-text-bold"/>
+                        <br/>
+                        <h:outputText value="#{paymentBean.totalAssessment}">
+                            <f:convertNumber type="currency" currencySymbol="₱"/>
+                        </h:outputText>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="Total Paid" styleClass="ui-text-bold"/>
+                        <br/>
+                        <h:outputText value="#{paymentBean.totalPaid}">
+                            <f:convertNumber type="currency" currencySymbol="₱"/>
+                        </h:outputText>
+                    </h:panelGroup>
+
+                    <h:panelGroup>
+                        <h:outputText value="Balance" styleClass="ui-text-bold"/>
+                        <br/>
+                        <h:outputText value="#{paymentBean.balance}" style="color:red;">
+                            <f:convertNumber type="currency" currencySymbol="₱"/>
+                        </h:outputText>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+            </p:panel>
+
+            <!-- ================= PAYMENT ENTRY ================= -->
+            <p:panel header="Submit Payment" style="margin-bottom:15px;">
+
+                <p:messages id="msgs" />
+
+
+                <h:panelGrid columns="2" cellpadding="8" style="width:100%;">
+
+                    <h:outputLabel value="Payment Mode"/>
+                    <p:selectOneMenu value="#{paymentBean.payment.paymentMode}" required="true">
+                        <f:selectItem itemLabel="-- Select --" itemValue="" />
+                        <f:selectItem itemLabel="Cash" itemValue="Cash"/>
+                        <f:selectItem itemLabel="Installment" itemValue="Installment"/>
+                    </p:selectOneMenu>
+
+                    <h:outputLabel value="Amount Paid"/>
+                    <!-- PF 5 SAFE: use inputText instead of inputNumber -->
+                    <p:inputText value="#{paymentBean.payment.amountPaid}" required="true">
+                        <f:convertNumber maxFractionDigits="2"/>
+                    </p:inputText>
+
+                    <h:outputLabel value="Remarks"/>
+                    <p:inputTextarea value="#{paymentBean.payment.paymentStatus}"
+                                     rows="3"
+                                     autoResize="false"/>
+
+                </h:panelGrid>
+
+                <p:separator/>
+
+                <p:commandButton value="Submit Payment"
+                                 icon="ui-icon-check"
+                                 actionListener="#{paymentBean.submitPayment}"
+                                 update="paymentForm msgs"/>
+
+            </p:panel>
+
+            <!-- ================= PAYMENT HISTORY ================= -->
+            <p:panel header="Payment History">
+
+                <p:dataTable value="#{paymentBean.paymentHistory}"
+                             var="p"
+                             selectionMode="single"
+                             selection="#{paymentBean.selectedPayment}"
+                             rowKey="#{p.id}"
+                             paginator="true"
+                             rows="10"
+                             emptyMessage="No payments found">
+
+                    <p:column headerText="Date">
+                        <h:outputText value="#{p.paymentDate}">
+                            <f:convertDateTime pattern="MMM dd, yyyy"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Mode">
+                        <h:outputText value="#{p.paymentMode}"/>
+                    </p:column>
+
+                    <p:column headerText="Amount">
+                        <h:outputText value="#{p.amountPaid}">
+                            <f:convertNumber type="currency" currencySymbol="₱"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Status">
+                        <!-- PF 5 SAFE: text instead of p:tag -->
+                        <h:outputText value="#{p.paymentStatus}"
+                                      style="#{p.paymentStatus eq 'APPROVED' ? 'color:green;' : 'color:orange;'}"/>
+                    </p:column>
+
+                    <p:column headerText="Action" style="width:120px;text-align:center;">
+                        <p:commandButton value="Receipt"
+                                         icon="ui-icon-print"
+                                         actionListener="#{paymentBean.downloadReceipt}"
+                                         ajax="false"
+                                         disabled="#{p.paymentStatus ne 'APPROVED'}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

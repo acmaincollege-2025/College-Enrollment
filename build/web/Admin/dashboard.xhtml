@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+
+<ui:composition template="/template/admin-layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+
+        <h:outputStylesheet>
+            .dashboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            }
+
+            .dashboard-card {
+            width: 220px;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            }
+
+            .dashboard-card:hover {
+            transform: translateY(-3px);
+            }
+
+            .dashboard-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+            }
+
+            .dashboard-title {
+            font-weight: bold;
+            font-size: 14px;
+            }
+
+            .dashboard-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            }
+        </h:outputStylesheet>
+
+        <h2>Admin Dashboard</h2>
+        <p>Quick access to system administration modules</p>
+
+        <div class="dashboard-grid">
+
+            <!-- CAROUSEL -->
+            <h:link outcome="carousel" styleClass="dashboard-card">
+                <span class="dashboard-icon">🖼</span>
+                <div class="dashboard-title">Carousel Management</div>
+                <div class="dashboard-desc">Manage homepage images</div>
+            </h:link>
+
+            <!-- EMAIL SETTINGS -->
+            <h:link outcome="email-settings" styleClass="dashboard-card">
+                <span class="dashboard-icon">✉</span>
+                <div class="dashboard-title">Email Settings</div>
+                <div class="dashboard-desc">SMTP &amp; notifications</div>
+            </h:link>
+
+            <!-- FAQ -->
+            <h:link outcome="faq" styleClass="dashboard-card">
+                <span class="dashboard-icon">❓</span>
+                <div class="dashboard-title">FAQ Management</div>
+                <div class="dashboard-desc">Manage system FAQs</div>
+            </h:link>
+
+            <!-- USER MANAGEMENT -->
+            <h:link outcome="user-management" styleClass="dashboard-card">
+                <span class="dashboard-icon">👥</span>
+                <div class="dashboard-title">User Management</div>
+                <div class="dashboard-desc">Admin, staff</div>
+            </h:link>
+
+            <h:link outcome="student-accountst" styleClass="dashboard-card">
+                <span class="dashboard-icon">🧑‍💻</span>
+                <div class="dashboard-title">Student Accounts</div>
+                <div class="dashboard-desc">Student</div>
+            </h:link>
+
+            <!-- AUDIT LOGS -->
+            <h:link outcome="audit" styleClass="dashboard-card">
+                <span class="dashboard-icon">🕵</span>
+                <div class="dashboard-title">Audit Logs</div>
+                <div class="dashboard-desc">System activity tracking</div>
+            </h:link>
+
+            <!-- PROFILE DIALOG INCLUDE (ONCE PER PAGE) 
+            <ui:include src="/common/user-profile-dialog.xhtml"/>-->
+            <h:link styleClass="dashboard-card"
+                    onclick="PF('userProfileDialog').show(); return false;">
+
+                <span class="dashboard-icon">👤</span>
+                <div class="dashboard-title">My Profile</div>
+                <div class="dashboard-desc">Account settings</div>
+
+            </h:link>
+
+
+        </div>
+
+    </ui:define>
+</ui:composition>

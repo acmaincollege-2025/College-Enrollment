@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="template/student_layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="content">
+
+        <!-- ================= MAIN PAGE ================= -->
+        <h:form id="enrollmentForm">
+
+            <h2><i class="pi pi-book"></i> Student Enrollment</h2>
+
+            <p:messages id="msgs" showDetail="true" closable="true"/>
+
+            <!-- Enrollment Period -->
+            <p:panel header="Enrollment Period">
+
+                <h:panelGrid columns="2" cellpadding="6">
+
+                    <h:outputText value="Academic Year:" />
+                    <h:outputText value="#{enrollmentPeriodBean.currentPeriod.academicYear}" />
+
+                    <h:outputText value="Semester:" />
+                    <h:outputText value="#{enrollmentPeriodBean.currentPeriod.semester}" />
+
+                    <h:outputText value="Status:" />
+                    <h:outputText
+                        value="#{enrollmentPeriodBean.enrollmentOpen ? 'OPEN' : 'CLOSED'}"
+                        styleClass="#{enrollmentPeriodBean.enrollmentOpen ? 'status-open' : 'status-closed'}"/>
+
+                </h:panelGrid>
+
+                <p:separator/>
+
+                <p:commandButton value="Enroll This Term"
+                                 icon="pi pi-check"
+                                 rendered="#{enrollmentPeriodBean.enrollmentOpen}"
+                                 onclick="PF('enrollDlg').show();"
+                                 type="button"
+                                 styleClass="ui-button-success"/>
+
+            </p:panel>
+
+            <!-- Closed Message -->
+            <p:panel rendered="#{!enrollmentPeriodBean.enrollmentOpen}"
+                     styleClass="ui-panel-warning"
+                     style="margin-top:10px">
+                <h:outputText value="Enrollment is currently CLOSED. Please wait for the next enrollment period." />
+            </p:panel>
+
+            <!-- Enrollment History -->
+            <p:panel header="My Enrollment History"
+                     rendered="#{not empty studentPortalBean.myEnrollments}"
+                     style="margin-top:20px">
+
+                <p:dataTable value="#{studentPortalBean.myEnrollments}"
+                             var="en"
+                             paginator="true"
+                             rows="5">
+
+                    <p:column headerText="Academic Year">#{en.academic_year}</p:column>
+                    <p:column headerText="Semester">#{en.semester}</p:column>
+                    <p:column headerText="Status">
+                        <h:outputText value="#{en.status}" styleClass="status-#{en.status}" />
+                    </p:column>
+                    <p:column headerText="Payment Status">#{en.payment_status}</p:column>
+
+                </p:dataTable>
+
+            </p:panel>
+
+        </h:form>
+
+        <!-- ================= ENROLLMENT DIALOG ================= -->
+        <p:dialog id="enrollDlg"
+                  widgetVar="enrollDlg"
+                  modal="true"
+                  resizable="false"
+                  closable="true"
+                  header="Enroll This Term"
+                  width="400">
+
+            <h:form id="enrollDialogForm">
+
+                <h:panelGrid columns="2" cellpadding="6" style="width:100%">
+
+                    <h:outputLabel value="Academic Year:" />
+                    <p:inputText value="#{studentPortalBean.enrollment.academic_year}" readonly="true"/>
+
+                    <h:outputLabel value="Semester:" />
+                    <p:inputText value="#{studentPortalBean.enrollment.semester}" readonly="true"/>
+
+                </h:panelGrid>
+
+                <p:separator/>
+
+                <p:commandButton value="Continue"
+                                 icon="pi pi-arrow-right"
+                                 type="button"
+                                 onclick="PF('confirmEnrollDlg').show();"
+                                 styleClass="ui-button-success"/>
+
+                <p:commandButton value="Cancel"
+                                 icon="pi pi-times"
+                                 type="button"
+                                 onclick="PF('enrollDlg').hide();"
+                                 styleClass="ui-button-secondary"/>
+
+            </h:form>
+        </p:dialog>
+
+        <!-- ================= CONFIRMATION DIALOG ================= -->
+        <p:confirmDialog id="confirmEnrollDlg"
+                         widgetVar="confirmEnrollDlg"
+                         closable="false"
+                         header="Confirm Enrollment">
+
+            <h:form id="confirmForm">
+
+                <h:panelGrid columns="2" cellpadding="6" style="margin-bottom:10px">
+
+                    <h:outputText value="Academic Year:" />
+                    <h:outputText value="#{studentPortalBean.enrollment.academic_year}" />
+
+                    <h:outputText value="Semester:" />
+                    <h:outputText value="#{studentPortalBean.enrollment.semester}" />
+
+                </h:panelGrid>
+
+                <h:outputText value="Are you sure you want to submit your enrollment?"
+                              style="font-weight:bold"/>
+
+                <p:separator/>
+
+                <p:commandButton id="finalSubmitBtn"
+                                 widgetVar="finalSubmitBtn"
+                                 value="Yes, Submit"
+                                 icon="pi pi-check"
+                                 action="#{studentPortalBean.submitEnrollment}"
+                                 update=":enrollmentForm"
+                                 onstart="PF('finalSubmitBtn').jq.text('Submitting...');"
+                                 oncomplete="PF('confirmEnrollDlg').hide(); PF('enrollDlg').hide();"
+                                 styleClass="ui-button-success"/>
+
+                <p:commandButton value="Cancel"
+                                 icon="pi pi-times"
+                                 type="button"
+                                 onclick="PF('confirmEnrollDlg').hide();"
+                                 styleClass="ui-button-secondary"/>
+
+            </h:form>
+        </p:confirmDialog>
+
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template/cashier-layout.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="content">
+
+        <h:form id="cashierForm">
+
+            <!-- =================== LIST =================== -->
+            <p:panel header="Student Assessments" styleClass="ui-card">
+
+                <p:dataTable id="assessmentTable"
+                             value="#{assessmentBean.cashierAssessmentList}"
+                             var="a"
+                             paginator="true"
+                             rows="10"
+                             rowKey="#{a.assessmentId}">
+
+                    <p:column headerText="Student">
+                        #{a.studentName}
+                    </p:column>
+
+                    <p:column headerText="Program">
+                        #{a.programName}
+                    </p:column>
+
+                    <p:column headerText="Total Amount">
+                        <h:outputText value="#{a.totalAmount}">
+                            <f:convertNumber type="currency" currencySymbol="₱"/>
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Status">
+                        <h:outputText value="#{a.status}"
+                                      styleClass="#{a.status eq 'APPROVED' ? 'badge-approved' : 'badge-pending'}"/>
+                    </p:column>
+
+                    <p:column headerText="Action" style="width:120px">
+                        <p:commandButton value="View"
+                                         icon="pi pi-search"
+                                         update=":cashierForm:assessmentDialog"
+                                         oncomplete="PF('assessmentDlg').show()"
+                                         actionListener="#{assessmentBean.viewAssessmentDetail(a)}"/>
+                    </p:column>
+
+                </p:dataTable>
+            </p:panel>
+
+            <!-- =================== DETAILS DIALOG =================== -->
+            <p:dialog id="assessmentDialog"
+                      widgetVar="assessmentDlg"
+                      header="Assessment Details"
+                      modal="true"
+                      width="650"
+                      resizable="false">
+
+                <!-- BASIC INFO -->
+                <h:panelGrid columns="2" width="100%" cellpadding="6">
+
+                    <h:outputText value="Student:"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.studentName}"/>
+
+                    <h:outputText value="Program:"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.programName}"/>
+
+                    <h:outputText value="Units:"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.totalUnits}"/>
+
+                    <h:outputText value="Unit Fee:"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.unitFee}">
+                        <f:convertNumber type="currency" currencySymbol="₱"/>
+                    </h:outputText>
+
+                </h:panelGrid>
+
+
+
+                <!-- FEES -->
+                <h3>Fee Breakdown</h3>
+
+                <h:panelGrid columns="2" width="100%" cellpadding="6">
+
+                    <h:outputText value="Tuition:"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.unitFee * assessmentBean.selectedAssessment.totalUnits}">
+                        <f:convertNumber type="currency" currencySymbol="₱"/>
+                    </h:outputText>
+
+                    <h:outputText value="Basic Fees:"/>
+                    <h:outputText value="#{assessmentBean.basicFeeTotal}">
+                        <f:convertNumber type="currency" currencySymbol="₱"/>
+                    </h:outputText>
+
+                    <h:outputText value="Other Fees:"/>
+                    <h:outputText value="#{assessmentBean.otherFeeTotal}">
+                        <f:convertNumber type="currency" currencySymbol="₱"/>
+                    </h:outputText>
+
+                    <h:outputText value="Total:"
+                                  style="font-weight:bold"/>
+                    <h:outputText value="#{assessmentBean.calculatedTotal}"
+                                  style="font-weight:bold">
+                        <f:convertNumber type="currency" currencySymbol="₱"/>
+                    </h:outputText>
+
+                </h:panelGrid>
+
+                <!-- STATUS -->
+                <p:panel style="margin-top:10px">
+                    <h:outputText value="Status: "
+                                  style="font-weight:bold"/>
+                    <h:outputText value="#{assessmentBean.selectedAssessment.status}"
+                                  styleClass="#{assessmentBean.assessmentApproved ? 'badge-approved' : 'badge-pending'}"/>
+                </p:panel>
+
+                <!-- FOOTER -->
+                <f:facet name="footer">
+
+                    <p:commandButton value="Approve"
+                                     icon="pi pi-check"
+                                     styleClass="ui-button-success"
+                                     rendered="#{not assessmentBean.assessmentApproved}"
+                                     actionListener="#{assessmentBean.updateAssessment}"
+                                     update="assessmentTable"
+                                     oncomplete="PF('assessmentDlg').hide()"/>
+
+                    <p:commandButton value="Close"
+                                     icon="pi pi-times"
+                                     styleClass="ui-button-secondary"
+                                     onclick="PF('assessmentDlg').hide();return false;"/>
+
+                </f:facet>
+
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>

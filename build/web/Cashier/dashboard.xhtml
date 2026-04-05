@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition template="/template/layout-cashier.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <ui:define name="content">
+        <h:outputStylesheet>
+            .dashboard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            }
+
+            .dashboard-card {
+            width: 220px;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            }
+
+            .dashboard-card:hover {
+            transform: translateY(-3px);
+            }
+
+            .dashboard-icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+            display: block;
+            }
+
+            .dashboard-title {
+            font-weight: bold;
+            font-size: 14px;
+            }
+
+            .dashboard-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            }
+        </h:outputStylesheet>
+
+        <h2 style="margin-top:0;">Cashier Dashboard</h2>
+
+        <div class="dashboard-grid">
+
+            <h:link outcome="/Cashier/cashier_approval" styleClass="dashboard-card">
+                <div class="card-icon">📋</div>
+                <div class="card-title">Pending Payments</div>
+                <div class="card-desc">Verify and approve online payments</div>
+            </h:link>
+
+            <h:link outcome="/Cashier/cashier-payment-history" styleClass="dashboard-card">
+                <div class="card-icon">📊</div>
+                <div class="card-title">Payment History</div>
+                <div class="card-desc">View processed transactions</div>
+            </h:link>
+
+            <h:link outcome="/Cashier/fee-config" styleClass="dashboard-card">
+                <div class="card-icon">⚙</div>
+                <div class="card-title">Fee Configuration</div>
+                <div class="card-desc">Manage tuition and fees</div>
+            </h:link>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

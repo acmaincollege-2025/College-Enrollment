@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:composition template="/template/registrar-layout.xhtml">
+
+        <ui:define name="content">
+
+            <h:form id="periodForm" class="ui-fluid">
+
+                <!-- ===== PAGE HEADER ===== -->
+                <div style="margin-bottom:20px">
+                    <h2>📅 Enrollment Period Management</h2>
+                    <p style="color:#6c757d;margin-top:5px">
+                        Manage the current and upcoming enrollment periods
+                    </p>
+                </div>
+
+                <!-- ================= CURRENT PERIOD ================= -->
+                <p:panel header="📌 Current Enrollment Period" styleClass="ui-panel-shadow" style="margin-bottom:25px">
+
+                    <div class="p-grid p-align-center">
+
+                        <div class="p-col-12 p-md-4">
+                            <strong>Academic Year</strong><br/>
+                            <h:outputText value="#{enrollmentPeriodBean.currentPeriod.academicYear}" />
+                        </div>
+
+                        <div class="p-col-12 p-md-4">
+                            <strong>Semester</strong><br/>
+                            <h:outputText value="#{enrollmentPeriodBean.currentPeriod.semester}" />
+                        </div>
+
+                        <div class="p-col-12 p-md-4">
+                            <strong>Status</strong><br/>
+                            <h:outputText
+                                value="#{enrollmentPeriodBean.currentPeriod.isOpen ? 'OPEN' : 'CLOSED'}"
+                                style="
+                                font-weight:bold;
+                                color: #{enrollmentPeriodBean.currentPeriod.isOpen ? '#28a745' : '#dc3545'};
+                                "/>
+                        </div>
+
+                    </div>
+
+                </p:panel>
+
+                <!-- ================= OPEN / CLOSE PERIOD ================= -->
+                <p:panel header="⚙️ Manage Enrollment Period" styleClass="ui-panel-shadow">
+
+                    <p:messages id="messages" showDetail="true" closable="true" />
+
+                    <div class="p-grid">
+
+                        <!-- Academic Year -->
+                        <div class="p-col-12 p-md-6">
+                            <p:outputLabel for="acadYear" value="Academic Year" /><br/>
+                            <p:inputText id="acadYear"
+                                         value="#{enrollmentPeriodBean.academicYear}"
+                                         placeholder="e.g. 2024-2025" />
+                        </div>
+
+                        <!-- Semester -->
+                        <div class="p-col-12 p-md-6">
+                            <p:outputLabel for="semester" value="Semester" /><br/>
+                            <p:selectOneMenu id="semester"
+                                             value="#{enrollmentPeriodBean.semester}">
+                                <f:selectItem itemLabel="Select Semester" itemValue="" />
+                                <f:selectItem itemLabel="1st Semester" itemValue="1st" />
+                                <f:selectItem itemLabel="2nd Semester" itemValue="2nd" />
+                                <f:selectItem itemLabel="Summer" itemValue="Summer" />
+                            </p:selectOneMenu>
+                        </div>
+
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div style="margin-top:20px">
+
+                        <p:commandButton value="✅ Open Enrollment"
+                                         action="#{enrollmentPeriodBean.openEnrollment}"
+                                         update="@form messages"
+                                         styleClass="ui-button-success"
+                                         icon="pi pi-play" />
+
+                        <p:commandButton value="⛔ Close Current Enrollment"
+                                         action="#{enrollmentPeriodBean.closeEnrollment}"
+                                         update="@form messages"
+                                         styleClass="ui-button-danger"
+                                         icon="pi pi-stop"
+                                         style="margin-left:10px"
+                                         rendered="#{enrollmentPeriodBean.currentPeriod.isOpen}" />
+
+                    </div>
+
+                </p:panel>
+
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<ui:composition
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui">
+
+    <div class="sidebar">
+
+        <div class="sidebar-header">
+            🎓 Dean Panel
+        </div>
+
+        <!-- DASHBOARD -->
+        <h:link outcome="dashboard" value="📊 Dashboard" />
+
+        <!-- ENROLLMENT -->
+        <h:link outcome="enrollment-list" value="📋 Student List" />
+        <h:link outcome="dean-report" value="📄 Dean Reports" />
+
+        <!-- STUDENTS -->
+        <h:link outcome="/Dean/dean_student_progress.xhtml" value="📈 Student Progress" />
+
+        <!-- PROFILE -->
+        <ui:include src="/common/user-profile-dialog.xhtml"/>
+        <h:form>
+            <p:commandLink value="👤 Profile"
+                           onclick="PF('userProfileDialog').show(); return false;" />
+        </h:form>
+
+        <!-- LOGOUT (MUST BE OWN FORM) -->
+        <h:form id="logoutForm">
+            <li class="menu-item">
+                <a href="#{request.contextPath}/logout"
+                   onclick="return confirm('Are you sure you want to logout?');">
+                    🚪 Logout
+                </a>
+            </li>
+
+        </h:form>
+
+    </div>
+
+</ui:composition>
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Add / Drop Subjects</title>
+</h:head>
+
+<h:body>
+
+<h:form id="addDropForm">
+
+    <p:panel header="Add / Drop Subjects Request">
+
+        <!-- CURRENTLY ENROLLED -->
+        <h3>Currently Enrolled Subjects</h3>
+
+        <p:dataTable value="#{addDropBean.enrolledCourses}"
+                     var="c"
+                     selection="#{addDropBean.coursesToDrop}"
+                     rowKey="#{c.courseId}"
+                     selectionMode="multiple">
+
+            <p:column selectionMode="multiple" style="width:40px" />
+
+            <p:column headerText="Code">
+                #{c.courseCode}
+            </p:column>
+
+            <p:column headerText="Title">
+                #{c.courseTitle}
+            </p:column>
+
+            <p:column headerText="Units">
+                #{c.units}
+            </p:column>
+        </p:dataTable>
+
+        <br/>
+
+        <!-- AVAILABLE COURSES -->
+        <h3>Available Subjects to Add</h3>
+
+        <p:dataTable value="#{addDropBean.availableCourses}"
+                     var="c"
+                     selection="#{addDropBean.coursesToAdd}"
+                     rowKey="#{c.courseId}"
+                     selectionMode="multiple">
+
+            <p:column selectionMode="multiple" style="width:40px" />
+
+            <p:column headerText="Code">
+                #{c.courseCode}
+            </p:column>
+
+            <p:column headerText="Title">
+                #{c.courseTitle}
+            </p:column>
+
+            <p:column headerText="Units">
+                #{c.units}
+            </p:column>
+        </p:dataTable>
+
+        <br/>
+
+        <p:commandButton value="Submit Add/Drop Request"
+                         icon="ui-icon-check"
+                         action="#{addDropBean.submitRequest}"
+                         update="@form"
+                         styleClass="ui-button-success" />
+
+    </p:panel>
+
+</h:form>
+
+</h:body>
+</html>
+

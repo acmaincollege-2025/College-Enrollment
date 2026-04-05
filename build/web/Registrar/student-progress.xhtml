@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <h:outputStylesheet library="primefaces" name="primeflex/primeflex.css" />
+        <style>
+            .ui-panelgrid {
+                margin-left: 0 !important;
+            }
+        </style>
+    </h:head>
+
+    <ui:composition template="/template/registrar-layout.xhtml">
+
+        <ui:define name="content">
+
+            <!-- ================= SINGLE GLOBAL FORM ================= -->
+            <h:form id="mainForm">
+
+                <!-- GLOBAL MESSAGES -->
+                <p:growl id="messages" showDetail="true" life="4000" />
+
+                <!-- ================= SEARCH PANEL ================= -->
+                <p:panel header="🔍 Search Student">
+
+                    <p:panelGrid columns="2"
+                                 style="width:auto; margin-left:0;"
+                                 columnClasses="label,field"
+                                 styleClass="ui-panelgrid-blank">
+
+                        <p:outputLabel value="Program" />
+
+                        <p:selectOneMenu value="#{studentProgressBean.selectedProgramId}"
+                                         style="width:auto">
+                            <f:selectItem itemLabel="-- Select Program --" itemValue="" />
+                            <f:selectItems value="#{studentProgressBean.programList}"
+                                           var="p"
+                                           itemLabel="#{p.program_name}"
+                                           itemValue="#{p.program_code}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Last Name / Student No." />
+
+                        <p:inputText value="#{studentProgressBean.searchKeyword}"
+                                     style="width:auto" />
+
+                    </p:panelGrid>
+                    <!-- ================= SEARCH RESULTS ================= -->
+                    <p:dataTable id="studentSearchTable"
+                                 value="#{studentProgressBean.searchResults}"
+                                 var="s"
+                                 paginator="true"
+                                 rows="5"
+                                 reflow="true"
+                                 emptyMessage="No students found"
+                                 styleClass="p-datatable-sm p-mt-3">
+
+                        <p:column headerText="Student No">
+                            #{s.studno}
+                        </p:column>
+
+                        <p:column headerText="Full Name">
+                            #{s.lastname}, #{s.firstname}
+                        </p:column>
+
+                        <p:column headerText="Action" style="text-align:center">
+
+                            <p:commandButton value="View Progress"
+                                             icon="pi pi-eye"
+                                             action="#{studentProgressBean.loadProgressFromSearch(s)}"
+                                             update="progressTable messages" />
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:panel>
+
+                <!-- ================= COURSE PROGRESS ================= -->
+                <p:panel header="📘 Course Progress Details" styleClass="p-mt-4">
+
+                    <p:dataTable id="progressTable"
+                                 value="#{studentProgressBean.courseProgressList}"
+                                 var="cp"
+                                 reflow="true"
+                                 emptyMessage="Select a student to view progress"
+                                 styleClass="p-datatable-sm p-datatable-gridlines">
+
+                        <p:column headerText="Course">
+                            #{cp.course.courseTitle}
+                        </p:column>
+
+                        <p:column headerText="Status" style="width:200px">
+
+                            <p:selectOneMenu value="#{cp.status}">
+                                <f:selectItem itemLabel="Select Status" itemValue="" />
+                                <f:selectItem itemLabel="Ongoing" itemValue="Ongoing" />
+                                <f:selectItem itemLabel="Completed" itemValue="Completed" />
+                                <f:selectItem itemLabel="Failed" itemValue="Failed" />
+                            </p:selectOneMenu>
+
+                        </p:column>
+
+                        <p:column headerText="Action" style="width:150px; text-align:center">
+
+                            <p:commandButton value="Update"
+                                             icon="pi pi-check"
+                                             action="#{studentProgressBean.updateCourseStatus}"
+                                             update="progressTable messages">
+
+                                <f:setPropertyActionListener
+                                    target="#{studentProgressBean.selectedCourseId}"
+                                    value="#{cp.course.courseId}" />
+
+                            </p:commandButton>
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                </p:panel>
+
+            </h:form>
+
+        </ui:define>
+
+    </ui:composition>
+</html>
