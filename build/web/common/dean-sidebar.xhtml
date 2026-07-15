@@ -12,38 +12,126 @@ and open the template in the editor.
     xmlns:p="http://primefaces.org/ui">
 
     <div class="sidebar">
+        <h:outputStylesheet>
+            .sidebar {
+            width: 250px;
+            height: 100vh;
+            background: #1e293b;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            }
 
+            .sidebar-header {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            }
+
+            .sidebar-header i {
+            margin-right: 10px;
+            }
+
+            .menu-group {
+            padding: 15px 0;
+            }
+
+            .menu-title {
+            font-size: 11px;
+            color: #94a3b8;
+            padding: 0 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            }
+
+            .menu-link {
+            display: block;
+            color: #f8fafc;
+            text-decoration: none;
+            padding: 12px 20px;
+            transition: all .2s;
+            }
+
+            .menu-link:hover {
+            background: #334155;
+            color: white;
+            }
+
+            .menu-link i {
+            width: 20px;
+            margin-right: 10px;
+            }
+
+            .sidebar-footer {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,.1);
+            padding-top: 10px;
+            }
+
+            .logout-link:hover {
+            background: #dc2626;
+            }
+        </h:outputStylesheet>
         <div class="sidebar-header">
-            🎓 Dean Panel
+            <i class="pi pi-graduation-cap"></i>
+            <span>Dean Portal</span>
         </div>
 
-        <!-- DASHBOARD -->
-        <h:link outcome="dashboard" value="📊 Dashboard" />
+        <div class="menu-group">
+            <div class="menu-title">MAIN</div>
 
-        <!-- ENROLLMENT -->
-        <h:link outcome="enrollment-list" value="📋 Student List" />
-        <h:link outcome="dean-report" value="📄 Dean Reports" />
+            <h:link outcome="/Dean/dashboard.xhtml" styleClass="menu-link">
+                <i class="pi pi-home"></i>
+                📊 Dashboard
+            </h:link>
+        </div>
 
-        <!-- STUDENTS -->
-        <h:link outcome="/Dean/dean_student_progress.xhtml" value="📈 Student Progress" />
+        <div class="menu-group">
+            <div class="menu-title">ACADEMICS</div>
 
-        <!-- PROFILE -->
-        <ui:include src="/common/user-profile-dialog.xhtml"/>
-        <h:form>
-            <p:commandLink value="👤 Profile"
-                           onclick="PF('userProfileDialog').show(); return false;" />
-        </h:form>
+            <h:link outcome="enrollment-list" styleClass="menu-link">
+                <i class="pi pi-users"></i>
+                📋 Enrollment List
+            </h:link>
 
-        <!-- LOGOUT (MUST BE OWN FORM) -->
-        <h:form id="logoutForm">
-            <li class="menu-item">
-                <a href="#{request.contextPath}/logout"
-                   onclick="return confirm('Are you sure you want to logout?');">
-                    🚪 Logout
-                </a>
-            </li>
+            <h:link outcome="class-list" styleClass="menu-link">
+                <i class="pi pi-book"></i>
+                📄 Class List Generator
+            </h:link>
 
-        </h:form>
+            <h:link outcome="student-progress"
+                    styleClass="dashboard-btn">
+                📈 Student Progress
+            </h:link> 
+        </div>
+
+        <div class="menu-group">
+            <div class="menu-title">ACCOUNT</div>
+            <ui:include src="/common/user-profile-dialog.xhtml"/>
+            <h:form>
+                <p:commandLink styleClass="menu-link"
+                               onclick="PF('userProfileDialog').show(); return false;">
+
+                    <i class="pi pi-user"></i>
+                    👤 My Profile
+
+                </p:commandLink>
+            </h:form>
+        </div>
+
+        <div class="sidebar-footer">
+
+            <a href="#{request.contextPath}/logout"
+               class="menu-link logout-link"
+               onclick="return confirm('Are you sure you want to logout?');">
+
+                <i class="pi pi-sign-out"></i>
+                🚪 Logout
+
+            </a>
+
+        </div>
 
     </div>
 

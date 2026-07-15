@@ -5,84 +5,181 @@ To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
 <!DOCTYPE html>
-<!DOCTYPE html>
+
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      template="/template/layout_student.xhtml">
 
-<h:head>
-    <title>Add / Drop Subjects</title>
-</h:head>
+    <h:head>
+        <title>Add / Drop Subjects</title>
+    </h:head>
+    <h:body>
+    <style>
+        .page-panel {
+            border: none !important;
+        }
 
-<h:body>
+        .page-description {
+            color: #666;
+            font-size: 13px;
+        }
 
-<h:form id="addDropForm">
+        .subject-grid {
+            width: 100%;
+        }
 
-    <p:panel header="Add / Drop Subjects Request">
+        .subject-panel {
+            margin: 5px;
+        }
 
-        <!-- CURRENTLY ENROLLED -->
-        <h3>Currently Enrolled Subjects</h3>
+        .summary-panel {
+            margin-top: 15px;
+        }
 
-        <p:dataTable value="#{addDropBean.enrolledCourses}"
-                     var="c"
-                     selection="#{addDropBean.coursesToDrop}"
-                     rowKey="#{c.courseId}"
-                     selectionMode="multiple">
+        .summary-grid td {
+            padding: 8px 12px;
+        }
 
-            <p:column selectionMode="multiple" style="width:40px" />
+        .submit-btn {
+            min-width: 180px;
+        }
+    </style>
+    <h:body>
 
-            <p:column headerText="Code">
-                #{c.courseCode}
-            </p:column>
+        <h:form id="addDropForm">
 
-            <p:column headerText="Title">
-                #{c.courseTitle}
-            </p:column>
+            <p:growl id="msgs" showDetail="true"/>
 
-            <p:column headerText="Units">
-                #{c.units}
-            </p:column>
-        </p:dataTable>
+            <p:panel styleClass="page-panel">
 
-        <br/>
+                <f:facet name="header">
+                    <h2>Add / Drop Subjects Request</h2>
+                </f:facet>
 
-        <!-- AVAILABLE COURSES -->
-        <h3>Available Subjects to Add</h3>
+                <h:outputText
+                    value="Select subjects you want to add or drop for the current enrollment period."
+                    styleClass="page-description"/>
 
-        <p:dataTable value="#{addDropBean.availableCourses}"
-                     var="c"
-                     selection="#{addDropBean.coursesToAdd}"
-                     rowKey="#{c.courseId}"
-                     selectionMode="multiple">
+                <br/><br/>
 
-            <p:column selectionMode="multiple" style="width:40px" />
+                <p:panelGrid columns="2"
+                             layout="grid"
+                             styleClass="ui-panelgrid-blank subject-grid">
 
-            <p:column headerText="Code">
-                #{c.courseCode}
-            </p:column>
+                    <!-- DROP SUBJECTS -->
+                    <p:panel header="Currently Enrolled Subjects"
+                             styleClass="subject-panel">
 
-            <p:column headerText="Title">
-                #{c.courseTitle}
-            </p:column>
+                        <p:dataTable id="dropTable"
+                                     value="#{addDropBean.enrolledCourses}"
+                                     var="c"
+                                     selection="#{addDropBean.coursesToDrop}"
+                                     rowKey="#{c.courseId}"
+                                     paginator="true"
+                                     rows="8">
 
-            <p:column headerText="Units">
-                #{c.units}
-            </p:column>
-        </p:dataTable>
+                            <p:column selectionMode="multiple"
+                                      style="width:40px"/>
 
-        <br/>
+                            <p:column headerText="Code">
+                                #{c.courseCode}
+                            </p:column>
 
-        <p:commandButton value="Submit Add/Drop Request"
-                         icon="ui-icon-check"
-                         action="#{addDropBean.submitRequest}"
-                         update="@form"
-                         styleClass="ui-button-success" />
+                            <p:column headerText="Title">
+                                #{c.courseTitle}
+                            </p:column>
 
-    </p:panel>
+                            <p:column headerText="Units">
+                                #{c.units}
+                            </p:column>
 
-</h:form>
+                        </p:dataTable>
 
-</h:body>
+                    </p:panel>
+
+                    <!-- ADD SUBJECTS -->
+                    <p:panel header="Available Subjects"
+                             styleClass="subject-panel">
+
+                        <p:dataTable id="addTable"
+                                     value="#{addDropBean.availableCourses}"
+                                     var="c"
+                                     selection="#{addDropBean.coursesToAdd}"
+                                     rowKey="#{c.courseId}"
+                                     paginator="true"
+                                     rows="8">
+
+                            <p:column selectionMode="multiple"
+                                      style="width:40px"/>
+
+                            <p:column headerText="Code">
+                                #{c.courseCode}
+                            </p:column>
+
+                            <p:column headerText="Title">
+                                #{c.courseTitle}
+                            </p:column>
+
+                            <p:column headerText="Units">
+                                #{c.units}
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </p:panel>
+
+                </p:panelGrid>
+
+                <br/>
+
+                <!-- SUMMARY -->
+                <p:panel header="Request Summary"
+                         styleClass="summary-panel">
+
+                    <p:panelGrid columns="4"
+                                 styleClass="summary-grid">
+
+                        <h:outputText value="Subjects to Add:" />
+                        <h:outputText value="#{addDropBean.coursesToAdd.size()}" />
+
+                        <h:outputText value="Subjects to Drop:" />
+                        <h:outputText value="#{addDropBean.coursesToDrop.size()}" />
+
+                        <h:outputText value="Units Added:" />
+                        <h:outputText value="#{addDropBean.totalUnitsToAdd}" />
+
+                        <h:outputText value="Units Dropped:" />
+                        <h:outputText value="#{addDropBean.totalUnitsToDrop}" />
+
+                    </p:panelGrid>
+
+                    <br/>
+
+                    <p:outputLabel value="Reason for Request" />
+
+                    <p:inputTextarea
+                        value="#{addDropBean.reason}"
+                        rows="4"
+                        autoResize="false"
+                        style="width:100%;"
+                        placeholder="Enter reason here..." />
+
+                    <br/><br/>
+
+                    <p:commandButton
+                        value="Submit Request"
+                        icon="ui-icon-check"
+                        action="#{addDropBean.submitRequest}"
+                        update="@form"
+                        styleClass="submit-btn"
+                        disabled="#{empty addDropBean.coursesToAdd and empty addDropBean.coursesToDrop}" />
+
+                </p:panel>
+
+            </p:panel>
+
+        </h:form>
 </html>
 

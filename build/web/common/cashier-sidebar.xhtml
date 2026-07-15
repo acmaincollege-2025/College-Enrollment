@@ -19,7 +19,15 @@ and open the template in the editor.
                 value="🏠 Dashboard"
                 styleClass="menu-item"/>
 
-        <h:link outcome="/Cashier/cashier_approval"
+        <h:link outcome="/Cashier/cashier-assessment"
+                value="📟 Asses Student"
+                styleClass="menu-item"/>
+        
+        <h:link outcome="/Cashier/cashier-pos"
+                value="💵 Payments"
+                styleClass="menu-item"/>
+        
+        <h:link outcome="/Cashier/cashier-pending"
                 value="📋 Pending Payments"
                 styleClass="menu-item"/>
 
@@ -30,6 +38,12 @@ and open the template in the editor.
         <h:link outcome="/Cashier/fee-config"
                 value="⚙ Fee Configuration"
                 styleClass="menu-item"/>
+        
+        <h:link outcome="/Cashier/payment-item"
+                value="⚙ Payment Item Settings"
+                styleClass="menu-item"/>
+        
+       
 
         <ui:include src="/common/user-profile-dialog.xhtml"/>
         <h:form>

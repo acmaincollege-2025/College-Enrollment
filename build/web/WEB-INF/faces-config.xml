@@ -420,6 +420,10 @@
             <from-outcome>courseList</from-outcome>
             <to-view-id>/Registrar/course-list.xhtml</to-view-id>
         </navigation-case>
+        <navigation-case>
+            <from-outcome>course</from-outcome>
+            <to-view-id>/Registrar/course.xhtml</to-view-id>
+        </navigation-case>
     </navigation-rule>
     <navigation-rule>
         <from-view-id>/Registrar/student-management.xhtml</from-view-id>
@@ -580,6 +584,10 @@
             <to-view-id>/student/dashboard.xhtml</to-view-id>
             <redirect />
         </navigation-case>
+        <navigation-case>
+            <from-outcome>data-privacy</from-outcome>
+            <to-view-id>/common/data-privacy.xhtml</to-view-id>
+        </navigation-case>
     </navigation-rule>
     <navigation-rule>
         <from-view-id>/Admin/student-accounts.xhtml</from-view-id>
@@ -594,6 +602,28 @@
         <navigation-case>
             <from-outcome>audit</from-outcome>
             <to-view-id>/Admin/audit_logs.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/Cashier/dashboard.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>cashier-payment</from-outcome>
+            <to-view-id>/Cashier/cashier-payment.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>cashier_approval</from-outcome>
+            <to-view-id>/Cashier/cashier_approval.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>fee-config</from-outcome>
+            <to-view-id>/Cashier/fee-config.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/Registrar/course.xhtml</from-view-id>
+        <navigation-case>
+            <from-outcome>course-list</from-outcome>
+            <to-view-id>/Registrar/course-list.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

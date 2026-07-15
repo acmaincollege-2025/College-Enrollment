@@ -6,7 +6,60 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <ui:define name="content">
+        <h:outputStylesheet>
+            /* QUICK ACCESS */
+            .quick-access-section {
+            margin-top: 30px;
+            }
 
+            .section-title {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 20px;
+            font-weight: 600;
+            }
+
+            .quick-access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            }
+
+            .module-card {
+            display: block;
+            text-decoration: none;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            transition: all .3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            }
+
+            .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+            border-color: #3498db;
+            }
+
+            .module-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            }
+
+            .module-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 6px;
+            }
+
+            .module-desc {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.4;
+            }
+        </h:outputStylesheet>
         <h2>📊 Enrollment Statistics</h2>
         <p class="text-muted">Filter and analyze enrollment data</p>
 
@@ -57,93 +110,65 @@
 
             </div>
 
-            <!-- FILTER PANEL -->
-            <p:panel header="Filters" styleClass="mb-3">
+            <!-- QUICK ACCESS MODULES -->
+            <div class="quick-access-section">
 
-                <p:panelGrid columns="6" layout="grid"
-                             columnClasses="ui-g-12 ui-md-4,
-                             ui-g-12 ui-md-4,
-                             ui-g-12 ui-md-4">
+                <h3 class="section-title">Quick Access</h3>
 
-                    <h:panelGroup>
-                        <h:outputLabel value="Year" />
-                        <p:selectOneMenu value="#{dashboardBean.selectedYear}" style="width:100%">
-                            <f:selectItem itemLabel="Select Year" itemValue="" />
-                            <f:selectItems value="#{dashboardBean.years}" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
+                <div class="quick-access-grid">
 
-                    <h:panelGroup>
-                        <h:outputLabel value="Semester" />
-                        <p:selectOneMenu value="#{dashboardBean.selectedSemester}" style="width:100%">
-                            <f:selectItem itemLabel="Select Semester" itemValue="" />
-                            <f:selectItem itemLabel="1st" itemValue="1st" />
-                            <f:selectItem itemLabel="2nd" itemValue="2nd" />
-                            <f:selectItem itemLabel="Summer" itemValue="Summer" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
+                    <h:link outcome="enrollment" styleClass="module-card">
+                        <div class="module-icon">📝</div>
+                        <div class="module-title">Admission / Enrollment</div>
+                        <div class="module-desc">Manage student applications and enrollment</div>
+                    </h:link>
 
-                    <h:panelGroup>
-                        <h:outputLabel value="Program" />
-                        <p:selectOneMenu value="#{dashboardBean.selectedProgramId}" style="width:100%">
-                            <f:selectItem itemLabel="Select Program" itemValue="" />
-                            <f:selectItems value="#{dashboardBean.programList}"
-                                           var="p"
-                                           itemLabel="#{p.program_name}"
-                                           itemValue="#{p.program_id}" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
+                    <h:link outcome="enrollment-period" styleClass="module-card">
+                        <div class="module-icon">📅</div>
+                        <div class="module-title">Enrollment Period</div>
+                        <div class="module-desc">Configure enrollment schedules</div>
+                    </h:link>
 
-                </p:panelGrid>
+                    <h:link outcome="student-management" styleClass="module-card">
+                        <div class="module-icon">👨‍🎓</div>
+                        <div class="module-title">Manage Students</div>
+                        <div class="module-desc">Student information management</div>
+                    </h:link>
 
-                <p:commandButton value="Apply Filter"
-                                 icon="pi pi-search"
-                                 action="#{dashboardBean.filterStats}"
-                                 update="chartPanel tablePanel msgs"
-                                 styleClass="ui-button-success mt-2" />
-            </p:panel>
+                    <h:link outcome="student-list" styleClass="module-card">
+                        <div class="module-icon">📋</div>
+                        <div class="module-title">Student List</div>
+                        <div class="module-desc">View all registered students</div>
+                    </h:link>
 
-            <!-- CHART -->
-            <p:panel id="chartPanel" header="Enrollment Chart" styleClass="mb-3">
-                <p:barChart model="#{dashboardBean.enrollmentChart}"
-                            rendered="#{not empty dashboardBean.enrollmentStats}"
-                            style="width:100%; height:350px;" />
+                    <h:link outcome="course" styleClass="module-card">
+                        <div class="module-icon">📚</div>
+                        <div class="module-title">Course Setup</div>
+                        <div class="module-desc">Manage curriculum and courses</div>
+                    </h:link>
 
-                <h:outputText value="No data available."
-                              rendered="#{empty dashboardBean.enrollmentStats}"
-                              styleClass="text-muted" />
-            </p:panel>
+                    <h:link outcome="/Registrar/college-programs.xhtml"
+                            styleClass="module-card">
+                        <div class="module-icon">🎓</div>
+                        <div class="module-title">College Programs</div>
+                        <div class="module-desc">Manage academic programs</div>
+                    </h:link>
 
-            <!-- TABLE -->
-            <p:panel id="tablePanel" header="Enrollment Details">
+                    <h:link outcome="approval" styleClass="module-card">
+                        <div class="module-icon">✅</div>
+                        <div class="module-title">Registrar Approval</div>
+                        <div class="module-desc">Review enrollment requests</div>
+                    </h:link>
 
-                <p:dataTable value="#{dashboardBean.enrollmentStats}"
-                             var="e"
-                             paginator="true"
-                             rows="10"
-                             rendered="#{not empty dashboardBean.enrollmentStats}"
-                             styleClass="p-datatable-striped p-datatable-gridlines">
+                    <h:link outcome="student-progress" styleClass="module-card">
+                        <div class="module-icon">📈</div>
+                        <div class="module-title">Student Progress</div>
+                        <div class="module-desc">Track academic performance</div>
+                    </h:link>
 
-                    <p:column headerText="Course Code">
-                        #{e.course.courseCode}
-                    </p:column>
+                </div>
 
-                    <p:column headerText="Course Title">
-                        #{e.courseTitle}
-                    </p:column>
-
-                    <p:column headerText="Enrolled">
-                        #{e.enrolledCount}
-                    </p:column>
-
-                </p:dataTable>
-
-                <h:outputText value="No enrollment records found."
-                              rendered="#{empty dashboardBean.enrollmentStats}"
-                              styleClass="text-muted" />
-            </p:panel>
-
+            </div>
         </h:form>
-
     </ui:define>
 </ui:composition>

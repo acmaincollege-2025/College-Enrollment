@@ -1,135 +1,279 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/template/registrar-layout.xhtml">>
 
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-
-    <h:head>
-        <h:outputStylesheet library="primefaces" name="primeflex/primeflex.css" />
+    <ui:define name="content">
         <style>
             .ui-panelgrid {
                 margin-left: 0 !important;
             }
+            .page-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                padding: 20px;
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            }
+
+            .page-title {
+                margin: 0;
+                color: #2c3e50;
+                font-size: 24px;
+                font-weight: 600;
+            }
+
+            .page-subtitle {
+                color: #7f8c8d;
+                font-size: 14px;
+            }
+
+            .search-panel {
+                background: white;
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            }
+
+            .search-grid {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .table-panel {
+                background: white;
+                padding: 15px;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            }
+
+            .student-info {
+                margin-bottom: 20px;
+                padding: 15px;
+                background: #f8f9fa;
+                border-radius: 8px;
+            }
+
+            .student-info h3 {
+                margin: 0 0 10px 0;
+                color: #2c3e50;
+            }
+
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .info-item {
+                font-size: 14px;
+            }
+
+            .label {
+                font-weight: 600;
+                color: #34495e;
+            }
+
+            .completed {
+                color: #27ae60;
+                font-weight: bold;
+            }
+
+            .enrolled {
+                color: #3498db;
+                font-weight: bold;
+            }
+
+            .failed {
+                color: #e74c3c;
+                font-weight: bold;
+            }
+
+            .dropped {
+                color: #f39c12;
+                font-weight: bold;
+            }
+
         </style>
-    </h:head>
+        <h:form id="progressForm"> 
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+                <div>
+                    <h2 class="page-title">
+                        📚 Student Progress Monitoring
+                    </h2>
 
-    <ui:composition template="/template/registrar-layout.xhtml">
+                    <div class="page-subtitle">
+                        View student's academic progress and completed subjects
+                    </div>
+                </div>
+            </div>
 
-        <ui:define name="content">
+            <!-- SEARCH PANEL -->
+            <div class="search-panel">
 
-            <!-- ================= SINGLE GLOBAL FORM ================= -->
-            <h:form id="mainForm">
+                <h3 style="margin-top:0">
+                    Search Student
+                </h3>
 
-                <!-- GLOBAL MESSAGES -->
-                <p:growl id="messages" showDetail="true" life="4000" />
+                <div class="search-grid">
 
-                <!-- ================= SEARCH PANEL ================= -->
-                <p:panel header="🔍 Search Student">
+                    <p:inputText
+                        value="#{studentProgressBean.searchKeyword}"
+                        placeholder="Student No or Student Name"
+                        style="width:350px"/>
 
-                    <p:panelGrid columns="2"
-                                 style="width:auto; margin-left:0;"
-                                 columnClasses="label,field"
-                                 styleClass="ui-panelgrid-blank">
+                    <p:commandButton
+                        value="🔍Search"
+                        action="#{studentProgressBean.searchStudents}"
+                        update="studentTable"/>
 
-                        <p:outputLabel value="Program" />
+                    <p:commandButton
+                        value="🔄 Refresh"
+                        process="@this"
+                        update="@form"/>
 
-                        <p:selectOneMenu value="#{studentProgressBean.selectedProgramId}"
-                                         style="width:auto">
-                            <f:selectItem itemLabel="-- Select Program --" itemValue="" />
-                            <f:selectItems value="#{studentProgressBean.programList}"
-                                           var="p"
-                                           itemLabel="#{p.program_name}"
-                                           itemValue="#{p.program_code}" />
-                        </p:selectOneMenu>
+                </div>
 
-                        <p:outputLabel value="Last Name / Student No." />
+            </div>
 
-                        <p:inputText value="#{studentProgressBean.searchKeyword}"
-                                     style="width:auto" />
 
-                    </p:panelGrid>
-                    <!-- ================= SEARCH RESULTS ================= -->
-                    <p:dataTable id="studentSearchTable"
-                                 value="#{studentProgressBean.searchResults}"
-                                 var="s"
-                                 paginator="true"
-                                 rows="5"
-                                 reflow="true"
-                                 emptyMessage="No students found"
-                                 styleClass="p-datatable-sm p-mt-3">
+            <!-- STUDENT TABLE -->
+            <div class="table-panel">
 
-                        <p:column headerText="Student No">
-                            #{s.studno}
-                        </p:column>
+                <p:dataTable id="studentTable"
+                             value="#{studentProgressBean.searchResults}"
+                             var="student"
+                             paginator="true"
+                             rows="10"
+                             rowKey="#{student.sid}"
+                             selectionMode="single"
+                             selection="#{studentProgressBean.selectedStudent}"
+                             emptyMessage="No students found">
 
-                        <p:column headerText="Full Name">
-                            #{s.lastname}, #{s.firstname}
-                        </p:column>
+                    <p:ajax event="rowSelect"
+                            listener="#{studentProgressBean.viewProgress}"
+                            update="@form"
+                            oncomplete="PF('progressDialog').show()" />
 
-                        <p:column headerText="Action" style="text-align:center">
+                    <p:column headerText="Student No">
+                        #{student.studno}
+                    </p:column>
 
-                            <p:commandButton value="View Progress"
-                                             icon="pi pi-eye"
-                                             action="#{studentProgressBean.loadProgressFromSearch(s)}"
-                                             update="progressTable messages" />
+                    <p:column headerText="Student Name">
+                        #{student.fullName}
+                    </p:column>
 
-                        </p:column>
+                    <p:column headerText="Program">
+                        #{student.program_enrolled}
+                    </p:column>
 
-                    </p:dataTable>
+                    <p:column headerText="Year Level">
+                        #{student.year_level}
+                    </p:column>
 
-                </p:panel>
+                    <p:column headerText="Status">
+                        #{student.remarks}
+                    </p:column>
 
-                <!-- ================= COURSE PROGRESS ================= -->
-                <p:panel header="📘 Course Progress Details" styleClass="p-mt-4">
+                </p:dataTable>
 
-                    <p:dataTable id="progressTable"
-                                 value="#{studentProgressBean.courseProgressList}"
-                                 var="cp"
-                                 reflow="true"
-                                 emptyMessage="Select a student to view progress"
-                                 styleClass="p-datatable-sm p-datatable-gridlines">
+            </div>
 
-                        <p:column headerText="Course">
-                            #{cp.course.courseTitle}
-                        </p:column>
+            <!-- DIALOG -->
+            <p:dialog id="progressDialog"
+                      widgetVar="progressDialog"
+                      header="Student Academic Progress"
+                      modal="true"
+                      width="1100"
+                      resizable="false">
 
-                        <p:column headerText="Status" style="width:200px">
+                <p:outputPanel id="progressContent">
 
-                            <p:selectOneMenu value="#{cp.status}">
-                                <f:selectItem itemLabel="Select Status" itemValue="" />
-                                <f:selectItem itemLabel="Ongoing" itemValue="Ongoing" />
-                                <f:selectItem itemLabel="Completed" itemValue="Completed" />
-                                <f:selectItem itemLabel="Failed" itemValue="Failed" />
-                            </p:selectOneMenu>
+                    <!-- Prevent NPE -->
+                    <h:panelGroup rendered="#{not empty studentProgressBean.selectedStudent}">
 
-                        </p:column>
+                        <!-- STUDENT INFO -->
+                        <div class="student-info">
 
-                        <p:column headerText="Action" style="width:150px; text-align:center">
+                            <h3>
+                                #{studentProgressBean.selectedStudent.fullName}
+                            </h3>
 
-                            <p:commandButton value="Update"
-                                             icon="pi pi-check"
-                                             action="#{studentProgressBean.updateCourseStatus}"
-                                             update="progressTable messages">
+                            <div class="info-grid">
 
-                                <f:setPropertyActionListener
-                                    target="#{studentProgressBean.selectedCourseId}"
-                                    value="#{cp.course.courseId}" />
+                                <div class="info-item">
+                                    <span class="label">Student No:</span>
+                                    #{studentProgressBean.selectedStudent.studno}
+                                </div>
 
-                            </p:commandButton>
+                                <div class="info-item">
+                                    <span class="label">Program:</span>
+                                    #{studentProgressBean.selectedStudent.program_enrolled}
+                                </div>
 
-                        </p:column>
+                                <div class="info-item">
+                                    <span class="label">Year Level:</span>
+                                    #{studentProgressBean.selectedStudent.year_level}
+                                </div>
 
-                    </p:dataTable>
+                                <div class="info-item">
+                                    <span class="label">Status:</span>
+                                    #{studentProgressBean.selectedStudent.remarks}
+                                </div>
 
-                </p:panel>
+                            </div>
 
-            </h:form>
+                        </div>
 
-        </ui:define>
+                        <!-- SUBJECT HISTORY -->
+                        <p:dataTable value="#{studentProgressBean.courseProgressList}"
+                                     var="course"
+                                     paginator="true"
+                                     rows="15"
+                                     emptyMessage="No academic records found">
 
-    </ui:composition>
-</html>
+                            <p:column headerText="Course Code">
+                                #{course.courseCode}
+                            </p:column>
+
+                            <p:column headerText="Course Title">
+                                #{course.courseTitle}
+                            </p:column>
+
+                            <p:column headerText="Units">
+                                #{course.units}
+                            </p:column>
+
+                            <p:column headerText="Year Level">
+                                #{course.yearLevel}
+                            </p:column>
+
+                            <p:column headerText="Semester">
+                                #{course.semester}
+                            </p:column>
+
+                            <p:column headerText="Status">
+                                #{course.status}
+                            </p:column>
+
+                        </p:dataTable>
+
+                    </h:panelGroup>
+
+                </p:outputPanel>
+
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>
+

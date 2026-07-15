@@ -77,10 +77,14 @@
                 </div>
 
 
-                <p:commandButton value="Search"
-                                 icon="pi pi-search"
+                <p:commandButton value="🔎 Search"
                                  action="#{courseBean.searchCoursesByFilters}"
-                                 update="courseTable msgs"
+                                 update="courseTable courseForm:msgs"
+                                 styleClass="ui-button-info"
+                                 style="margin-top:12px" />
+
+                <p:commandButton value="➕ Add Course"
+                                 action="course"
                                  styleClass="ui-button-info"
                                  style="margin-top:12px" />
 
@@ -170,10 +174,10 @@
                     <!-- Actions -->
                     <p:column headerText="Actions" style="width:120px; text-align:center">
                         <p:rowEditor />
-                        <p:commandButton icon="pi pi-trash"
+                        <p:commandButton value="🗑"
                                          title="Delete"
                                          action="#{courseBean.deleteCourse(c.courseId)}"
-                                         update="courseTable msgs"
+                                         update="courseTable courseForm:msgs"
                                          styleClass="ui-button-danger p-ml-2"
                                          process="@this" />
                     </p:column>

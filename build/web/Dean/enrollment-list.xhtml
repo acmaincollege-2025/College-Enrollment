@@ -21,101 +21,99 @@
     <!-- ===================== MAIN CONTENT ===================== -->
     <ui:define name="content">
 
-        <h:form id="enrollForm">
+        <h:form id="form">
 
-            <!-- ================= FILTER PANEL ================= -->
-            <p:panel header="📋 Enrollment List Generator" style="width:100%;">
+            <p:panel header="Enrollment List">
 
-                <p:messages id="msgs" closable="true" showIcon="true" />
-                <p:panelGrid columns="6" layout="grid"
-                             columnClasses="ui-g-12 ui-md-4,
-                             ui-g-12 ui-md-4,
-                             ui-g-12 ui-md-4">
+                <p:panelGrid columns="8">
 
-                    <h:panelGroup>
-                        <h:outputLabel value="Program" />
-                        <p:selectOneMenu value="#{enrollmentListBean.selectedProgram}" style="width:90%">
-                            <f:selectItem itemLabel="Select Program" itemValue="" />
-                            <f:selectItems value="#{enrollmentListBean.programList}"
-                                           var="p"
-                                           itemLabel="#{p.program_name}"
-                                           itemValue="#{p.program_code}" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
-                    <h:panelGroup>
-                        <h:outputLabel value="Year" />
-                        <p:selectOneMenu value="#{enrollmentListBean.selectedYear}" style="width:90%">
-                            <f:selectItem itemLabel="Select Year" itemValue="" />
-                            <f:selectItems value="#{enrollmentListBean.years}" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
+                    <p:outputLabel value="Program"/>
 
-                    <h:panelGroup>
-                        <h:outputLabel value="Semester" />
-                        <p:selectOneMenu value="#{enrollmentListBean.selectedSemester}" style="width:90%">
-                            <f:selectItem itemLabel="Select Semester" itemValue="" />
-                            <f:selectItem itemLabel="1st" itemValue="1st" />
-                            <f:selectItem itemLabel="2nd" itemValue="2nd" />
-                            <f:selectItem itemLabel="Summer" itemValue="Summer" />
-                        </p:selectOneMenu>
-                    </h:panelGroup>
+                    <p:selectOneMenu value="#{enrollmentListBean.programId}">
+                        <f:selectItem itemLabel="All Programs" itemValue="0"/>
+                        <f:selectItems value="#{enrollmentListBean.programs}"
+                                       var="p"
+                                       itemLabel="#{p.program_name}"
+                                       itemValue="#{p.program_id}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Year Level"/>
+
+                    <p:selectOneMenu value="#{enrollmentListBean.yearLevel}">
+                        <f:selectItem itemLabel="All" itemValue=""/>
+                        <f:selectItem itemLabel="1st Year" itemValue="1"/>
+                        <f:selectItem itemLabel="2nd Year" itemValue="2"/>
+                        <f:selectItem itemLabel="3rd Year" itemValue="3"/>
+                        <f:selectItem itemLabel="4th Year" itemValue="4"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Semester"/>
+
+                    <p:selectOneMenu value="#{enrollmentListBean.semester}">
+                        <f:selectItem itemLabel="All" itemValue=""/>
+                        <f:selectItem itemLabel="1st Semester" itemValue="1st"/>
+                        <f:selectItem itemLabel="2nd Semester" itemValue="2nd"/>
+                    </p:selectOneMenu>
+
+                    <p:commandButton value="🔍 Search"
+                                     actionListener="#{enrollmentListBean.loadEnrollmentList}"
+                                     update="tblEnrollment"/>
 
                 </p:panelGrid>
 
-                <!-- ACTION -->
-                <div style="text-align:right; margin-top:12px;">
-                    <p:commandButton value="🔍 Generate List"
-                                     action="#{enrollmentListBean.loadEnrolledStudents}"
-                                     update="msgs studentTable"
-                                     styleClass="p-button-primary" />
-                </div>
-
             </p:panel>
+            <!--Export Button -->
+            <p:commandButton value="🧾 Excel"
+                             ajax="false">
 
-            <!-- ================= RESULT TABLE ================= -->
-            <p:panel header="📑 Enrollment List">
+                <p:dataExporter type="xlsx"
+                                target="tblEnrollment"
+                                fileName="Enrollment_List"/>
+            </p:commandButton>
 
-                <ui:fragment rendered="#{not empty enrollmentListBean.studentList}">
-                    <p:dataTable id="studentTable"
-                                 value="#{enrollmentListBean.studentList}"
-                                 var="s"
-                                 paginator="true"
-                                 rows="10"
-                                 emptyMessage="No enrolled students found."
-                                 styleClass="p-datatable-striped">
+            <p:commandButton value="📃 PDF"
+                             ajax="false">
 
-                        <p:column headerText="Student No">
-                            <h:outputText value="#{s.studNo}" />
-                        </p:column>
+                <p:dataExporter type="pdf"
+                                target="tblEnrollment"
+                                fileName="Enrollment_List"/>
+            </p:commandButton>
+            <!--Print -->
+            <p:commandButton value="🖨 Print"
+                             type="button"
+                             onclick="window.print()"/>
+            
+            <p:dataTable id="tblEnrollment"
+                         value="#{enrollmentListBean.enrollmentList}"
+                         var="e"
+                         paginator="true"
+                         rows="20">
 
-                        <p:column headerText="Full Name">
-                            <h:outputText value="#{s.lastName}, #{s.firstName} #{s.middleName}" />
-                        </p:column>
+                <p:column headerText="Student No">
+                    <h:outputText value="#{e.studno}"/>
+                </p:column>
 
-                        <p:column headerText="Program">
-                            <h:outputText value="#{s.programName}" />
-                        </p:column>
+                <p:column headerText="Student Name">
+                    <h:outputText value="#{e.studentName}"/>
+                </p:column>
 
-                        <p:column headerText="Year Level">
-                            <h:outputText value="#{s.yearLevel}" />
-                        </p:column>
+                <p:column headerText="Program">
+                    <h:outputText value="#{e.programName}"/>
+                </p:column>
 
-                    </p:dataTable>
+                <p:column headerText="Year">
+                    <h:outputText value="#{e.yearLevel}"/>
+                </p:column>
 
-                    <div class="p-d-flex p-jc-end p-mt-3">
-                        <p:commandButton value="🖨 Print"
-                                         type="button"
-                                         onclick="window.print();"
-                                         styleClass="p-button-success" />
-                    </div>
-                </ui:fragment>
+                <p:column headerText="Semester">
+                    <h:outputText value="#{e.semester}"/>
+                </p:column>
 
-                <ui:fragment rendered="#{empty enrollmentListBean.studentList}">
-                    <h:outputText value="No records to display. Please filter first."
-                                  style="color:gray;" />
-                </ui:fragment>
+                <p:column headerText="Status">
+                    <h:outputText value="#{e.status}"/>
+                </p:column>
 
-            </p:panel>
+            </p:dataTable>
 
         </h:form>
 

@@ -4,71 +4,210 @@
 
 <ui:composition template="/template/layout-cashier.xhtml"
                 xmlns="http://www.w3.org/1999/xhtml"
-                xmlns:h="http://java.sun.com/jsf/html"
-                xmlns:ui="http://java.sun.com/jsf/facelets">
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <h:outputStylesheet>
-            .dashboard-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+
+        <style>
+            .dashboard-container {
+                padding: 20px;
             }
 
-            .dashboard-card {
-            width: 220px;
-            background: #ffffff;
-            border-radius: 6px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            .page-title {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 20px;
+                color: #2c3e50;
             }
 
-            .dashboard-card:hover {
-            transform: translateY(-3px);
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+                margin-bottom: 30px;
             }
 
-            .dashboard-icon {
-            font-size: 36px;
-            margin-bottom: 10px;
-            display: block;
+            .stat-card {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                box-shadow: 0 2px 10px rgba(0,0,0,.1);
+                text-align: center;
             }
 
-            .dashboard-title {
-            font-weight: bold;
-            font-size: 14px;
+            .stat-number {
+                font-size: 30px;
+                font-weight: bold;
+                color: #3498db;
             }
 
-            .dashboard-desc {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
+            .stat-label {
+                color: #666;
+                margin-top: 5px;
             }
-        </h:outputStylesheet>
 
-        <h2 style="margin-top:0;">Cashier Dashboard</h2>
+            .module-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 20px;
+            }
 
-        <div class="dashboard-grid">
+            .module-card {
+                background: white;
+                border-radius: 12px;
+                padding: 25px;
+                text-align: center;
+                text-decoration: none;
+                color: inherit;
+                box-shadow: 0 2px 10px rgba(0,0,0,.1);
+                transition: all .3s ease;
+                display: block;
+            }
 
-            <h:link outcome="/Cashier/cashier_approval" styleClass="dashboard-card">
-                <div class="card-icon">📋</div>
-                <div class="card-title">Pending Payments</div>
-                <div class="card-desc">Verify and approve online payments</div>
-            </h:link>
+            .module-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 6px 20px rgba(0,0,0,.15);
+            }
 
-            <h:link outcome="/Cashier/cashier-payment-history" styleClass="dashboard-card">
-                <div class="card-icon">📊</div>
-                <div class="card-title">Payment History</div>
-                <div class="card-desc">View processed transactions</div>
-            </h:link>
+            .module-icon {
+                font-size: 40px;
+                margin-bottom: 10px;
+            }
 
-            <h:link outcome="/Cashier/fee-config" styleClass="dashboard-card">
-                <div class="card-icon">⚙</div>
-                <div class="card-title">Fee Configuration</div>
-                <div class="card-desc">Manage tuition and fees</div>
-            </h:link>
+            .module-title {
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 8px;
+            }
+
+            .module-desc {
+                font-size: 13px;
+                color: #666;
+            }
+        </style>
+
+        <div class="dashboard-container">
+
+            <div class="page-title">
+                💰 Cashier Dashboard
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        #{cashierDashboardBean.totalPaymentsToday}
+                    </div>
+                    <div class="stat-label">
+                        Payments Today
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        #{cashierDashboardBean.pendingPayments}
+                    </div>
+                    <div class="stat-label">
+                        Pending Payments
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        ₱#{cashierDashboardBean.totalCollectionToday}
+                    </div>
+                    <div class="stat-label">
+                        Collection Today
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        #{cashierDashboardBean.totalStudentsPaid}
+                    </div>
+                    <div class="stat-label">
+                        Students Paid
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modules -->
+            <div class="module-grid">
+
+                <h:link outcome="/Cashier/cashier-assessment"
+                        styleClass="module-card">
+
+                    <div class="module-icon">📟</div>
+                    <div class="module-title">Assess Student</div>
+                    <div class="module-desc">
+                        Generate and manage assessment of fees.
+                    </div>
+
+                </h:link>
+
+                <h:link outcome="/Cashier/cashier-pos"
+                        styleClass="module-card">
+
+                    <div class="module-icon">💵</div>
+                    <div class="module-title">Payments</div>
+                    <div class="module-desc">
+                        Process student payments and print receipts.
+                    </div>
+
+                </h:link>
+
+                <h:link outcome="/Cashier/cashier-pending"
+                        styleClass="module-card">
+
+                    <div class="module-icon">📋</div>
+                    <div class="module-title">Pending Payments</div>
+                    <div class="module-desc">
+                        Verify online and pending transactions.
+                    </div>
+
+                </h:link>
+
+                <h:link outcome="/Cashier/cashier-payment-history"
+                        styleClass="module-card">
+
+                    <div class="module-icon">📊</div>
+                    <div class="module-title">Payment History</div>
+                    <div class="module-desc">
+                        View student payment records.
+                    </div>
+
+                </h:link>
+
+                <h:link outcome="/Cashier/fee-config"
+                        styleClass="module-card">
+
+                    <div class="module-icon">⚙️</div>
+                    <div class="module-title">Fee Configuration</div>
+                    <div class="module-desc">
+                        Manage tuition and school fees.
+                    </div>
+
+                </h:link>
+
+                <h:link outcome="/Cashier/payment-item"
+                        styleClass="module-card">
+
+                    <div class="module-icon">🧾</div>
+                    <div class="module-title">Payment Items</div>
+                    <div class="module-desc">
+                        Configure payment categories and items.
+                    </div>
+
+                </h:link>
+
+                
+
+            </div>
 
         </div>
 
